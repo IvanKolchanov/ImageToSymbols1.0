@@ -51,10 +51,13 @@ namespace ImageToSymbols
         {
             int wAspect = image.Width / width; //getting width and height aspects for the conversion
             int hAspect = image.Height / height;
-            int biggerAspectNumW = image.Width - wAspect * width, smallerAspectNumW = width - biggerAspectNumW, diffW = Math.Min(biggerAspectNumW, smallerAspectNumW) * 2; //biggerAspectNumW and smallerAspectNumW
+            int biggerAspectNumW = image.Width - wAspect * width, smallerAspectNumW = width - biggerAspectNumW; //biggerAspectNumW and smallerAspectNumW
+            int aspectNumMaxW = Math.Max(biggerAspectNumW, smallerAspectNumW), aspectNumMinW = biggerAspectNumW + smallerAspectNumW - aspectNumMaxW;
+            int change = aspectNumMaxW / aspectNumMinW + 1;
+            int diffW = change * aspectNumMinW;
             
-            bool change = false;
             int hY = image.Height - hAspect * height, hX = height - hY;
+            if (biggerAspectNumW > smallerAspectNumW) wAspect++;
             //Console.WriteLine(wAspect + " " + smallerAspectNumW + " " + biggerAspectNumW + " " + diffW);
             int imageCordX = 0, imageCordY = 0;
             long oneColor = 255 * 255 * 255 / gradient.Length;
@@ -63,29 +66,38 @@ namespace ImageToSymbols
                 if (j >= hX) hAspect++;
                 for (int i = 0; i < width; i++)
                 {
-                    long sum = 0;
-                    if (change && diffW > 0) { wAspect++; diffW -= 2; }
+                    long sumR = 0, sumG = 0, sumB = 0;
+                    if (i % change == 0 && diffW > 0) { wAspect = biggerAspectNumW > smallerAspectNumW ? wAspect - 1 : wAspect + 1; diffW -= change; }
                     for (int z = imageCordY; z < imageCordY + hAspect; z++)
                     {
                         for (int t = imageCordX; t < imageCordX + wAspect; t++)
                         {
                             Color pixel = image.GetPixel(t, z);
-                            int pixelBrightness = (int)(coefficient * (double)pixel.R * pixel.G * pixel.B);
-                            sum += pixelBrightness;
+                            sumR += pixel.R;
+                            sumG += pixel.G;
+                            sumB += pixel.B;
                         }
                     }
-                    sum = sum / (wAspect * hAspect);
-                    int gradientNum = (int)Math.Max(0, Math.Min(sum / oneColor, gradient.Length - 1));
-                    if (colorInversion) gradientNum = gradient.Length - gradientNum - 1;
-                    Console.Write(gradient[gradientNum]);
+                    sumR /= (wAspect * hAspect);
+                    sumG /= (wAspect * hAspect);
+                    sumB /= (wAspect * hAspect);
+                    long avgSum = (int)(0.299 * sumR + 0.587 * sumG + 0.114 * sumB);                    
+                    //int gradientNum = (int)Math.Max(0, Math.Min(sum / oneColor, gradient.Length - 1));
+                    //if (colorInversion) gradientNum = gradient.Length - gradientNum - 1;
+                    //Console.Write(gradient[gradientNum]);
+                    //Console.Write("\x1b[48;2;" + avgSum + ";" + avgSum + ";" + avgSum + "m");
+                    if (i % change == 0) Console.Write("\x1b[48;2;" + 0 + ";" + 0 + ";" + 0 + "m");
+                    else Console.Write("\x1b[48;2;" + sumR + ";" + sumG + ";" + sumB + "m");
+                    Console.Write(" ");
 
                     imageCordX += wAspect;
-                    if (change && diffW >= 0) wAspect--;
-                    change = !change;
-                    if (diffW == 0) { wAspect = biggerAspectNumW > smallerAspectNumW ? wAspect + 1 : wAspect; diffW = -1; }
+                    if (i % change == 0 && diffW >= 0) wAspect = biggerAspectNumW > smallerAspectNumW ? wAspect + 1 : wAspect - 1;
+                    
+                    if (diffW == 0) { diffW = -1; }
+                    
                 }
-                diffW = Math.Min(biggerAspectNumW, smallerAspectNumW) * 2;
-                wAspect = biggerAspectNumW > smallerAspectNumW ? wAspect - 1 : wAspect;
+                diffW = change * aspectNumMinW;
+                //wAspect = biggerAspectNumW > smallerAspectNumW ? wAspect - 1 : wAspect;
                 imageCordX = 0;
                 imageCordY += hAspect;
                 if (j >= hX) hAspect--;
@@ -97,9 +109,17 @@ namespace ImageToSymbols
             Console.Title = "Image to symbols";
             height = Console.WindowHeight;
             width = Console.WindowWidth;
-            Console.BufferHeight = Console.LargestWindowHeight + 10;
+            //Console.BufferHeight = Console.LargestWindowHeight + 10;
 
-            
+            var handle = GetStdHandle(-11);
+            int mode;
+            GetConsoleMode(handle, out mode);
+            SetConsoleMode(handle, mode | 0x4);
+
+            for (int i = 0; i < 255; i++)
+            {
+                Console.Write("\x1b[48;2;" + i + ";" + i + ";" + i + "m");
+            }
 
             bool programmRunning = true;
             while (programmRunning)
