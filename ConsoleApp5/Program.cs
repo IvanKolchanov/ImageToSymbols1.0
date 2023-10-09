@@ -1,5 +1,6 @@
 ﻿using ConsoleExtender;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
@@ -13,24 +14,27 @@ namespace ImageToSymbols
         private static Dictionary<char, int> symbolLightness = new Dictionary<char, int>();
         private static Dictionary<int, char> lightnessToSymbol = new Dictionary<int, char>();
         private static int[] lightnessList;
+
         private static int height;
         private static int width;
         private static int drawMode = 4;
-        private const int DRAW_SYMBOLS = 0, DRAW_IMAGE_COLOR = 1, DRAW_IMAGE_GREY = 2, DRAW_SYMBOLS_OLD_STYLE = 3, DRAW_IMAGE_NEW_GRADIENT = 4;
-        private static double coefficient = 2;
+        private const int DRAW_SYMBOLS = 0, DRAW_IMAGE_COLOR = 1, DRAW_IMAGE_GREY = 2, DRAW_SYMBOLS_OLD_STYLE = 3, DRAW_IMAGE_NEW_GRADIENT = 4, DRAW_CUSTOM_GRADIENT = 5;
+        private static double coefficient = 1;
         private static double fontAspect = 2.0;
         private static bool colorInversion = false;
         private static char[] gradient = new char[] { ' ', '.', ':', '!', '/', 'r', '(', 'l', '1', 'Z', '4', 'H', '9', 'W', '8', '$', '@' }; //add '\u25A0' to add the whitebox into the list
         //private static char[] gradient = new char[] { ' ', '.', ':', '~', '!', '=', 'v', '7', 'I', '/', 'r', '(', 'l', '1', 'Z', '4', 'H', '9', 'W', '8', '$', '@', '\u25A0' };
+        private static char[] customGradient;
+        private static int[] customGradientLightness, customScaledLightness;
 
         private static void setupGradient()
         {
             StreamReader sr = new StreamReader("C:\\Users\\kolch\\source\\repos\\w1ano\\ImageToSymbols1.0\\ConsoleApp5\\gradientSymbols.txt");
             String line = sr.ReadLine();
             symbolLightness.Add(' ', 0);
-            symbolLightness.Add('\u25A0', 10000000);
+            symbolLightness.Add('\u25A0', 1000000);
             lightnessToSymbol.Add(0, ' ');
-            lightnessToSymbol.Add(10000000, '\u25A0');
+            lightnessToSymbol.Add(1000000, '\u25A0');
             while (line != null)
             {
                 String[] a = line.Split(" ");
@@ -59,9 +63,6 @@ namespace ImageToSymbols
                 lightnessToSymbol[lightnessList[i]] = a;
                 symbolLightness[a] = lightnessList[i];
             }
-
-            //lightnessList.ToList().ForEach(i => Console.WriteLine(i));
-            //symbolLightness.ToList().ForEach(i => Console.WriteLine(i));
         }
 
         private static char findSymbolByLightness(double L)
@@ -74,6 +75,18 @@ namespace ImageToSymbols
                 else id = -id - 2;
             }
             return lightnessToSymbol[lightnessList[id]];
+        }
+
+        private static char findSymbolByLightnessCustom(double L)
+        {
+            int integerL = (int)(L * 10000.0);
+            int id = Array.BinarySearch(customScaledLightness, integerL);
+            if (id < 0)
+            {
+                if (-id == customScaledLightness.Length - 1) id = -id;
+                else id = -id - 2;
+            }
+            return lightnessToSymbol[customGradientLightness[Math.Min(Math.Max(id, 0), customGradientLightness.Length - 1)]];
         }
 
         private static double sRGBtoLin(double colorChannel)
@@ -97,12 +110,7 @@ namespace ImageToSymbols
             if (ConsoleHelper.GetConsoleFontSize().Height == 5) fontAspect = 2;
             if (ConsoleHelper.GetConsoleFontSize().Height < 5) fontAspect = 2;
 
-            double imageAspect = (double)image.Height / image.Width;
-            if (imageAspect > 1 && image.Height > Console.LargestWindowHeight && image.Width > Console.LargestWindowWidth) //making all photos landscape, because the height of the monitor is more restrictive in amount of symbols than width
-            {
-                image.RotateFlip(RotateFlipType.Rotate90FlipNone);
-                imageAspect = 1.0 / imageAspect;
-            }else if (Console.LargestWindowWidth >= image.Width && Console.LargestWindowHeight >= image.Height)
+            if (Console.LargestWindowWidth >= image.Width && Console.LargestWindowHeight >= image.Height / fontAspect)
             {
                 Console.SetWindowSize(image.Width, (int)(image.Height / fontAspect));
                 width = Console.WindowWidth;
@@ -110,15 +118,32 @@ namespace ImageToSymbols
                 return;
             }
 
+            double imageAspect = (double)image.Height / image.Width;
+
+            if (Console.LargestWindowWidth >= image.Width)
+            {
+                height = Console.LargestWindowHeight;
+                width = (int)(height / imageAspect * fontAspect);
+                Console.SetWindowSize(width, height);
+                return;
+            }
+
+            if (Console.LargestWindowHeight >= image.Height / fontAspect) {
+                width = Console.LargestWindowWidth;
+                height = (int)(width * imageAspect / fontAspect);
+                Console.SetWindowSize(width, height);
+                return;
+            }
+
             if (Console.LargestWindowWidth / fontAspect >= Console.LargestWindowHeight / imageAspect) //choosing width and height according to maximum quality
             {
-                height = Math.Min(Console.LargestWindowHeight, image.Height);
-                width = Math.Min((int)(height / imageAspect * fontAspect), image.Width);
+                height = Console.LargestWindowHeight;
+                width = (int)(height / imageAspect * fontAspect);
             }
             else
             {
-                width = Math.Min(Console.LargestWindowWidth, image.Width);
-                height = Math.Min((int)Math.Round(width * imageAspect / fontAspect), image.Height);
+                width = Console.LargestWindowWidth;
+                height = (int)(width * imageAspect / fontAspect);
             }
             Console.SetWindowSize(width, height); //setting up new window parameters
             Console.BufferWidth = Console.WindowWidth; //in case of user changing the buffer prior
@@ -127,8 +152,9 @@ namespace ImageToSymbols
 
         private static void convertImage(Bitmap image)
         {
-            int wAspect = Math.Min(image.Width / width, 1); //getting width and height aspects for the conversion
-            int hAspect = Math.Min(image.Height / height, 1);
+            Console.BufferWidth = width;
+            int wAspect = Math.Max(image.Width / width, 1); //getting width and height aspects for the conversion
+            int hAspect = Math.Max(image.Height / height, 1);
 
             int biggerAspectNumW = image.Width - wAspect * width, smallerAspectNumW = width - biggerAspectNumW; //biggerAspectNumW and smallerAspectNumW
             int aspectNumMaxW = Math.Max(biggerAspectNumW, smallerAspectNumW), aspectNumMinW = biggerAspectNumW + smallerAspectNumW - aspectNumMaxW;
@@ -188,24 +214,34 @@ namespace ImageToSymbols
                         case DRAW_SYMBOLS:
                             avgSum = (int)(findLightness(sumR, sumG, sumB) * 255.0 / 100.0);
                             int gradientNum = (int)Math.Max(0, Math.Min(avgSum / 255.0 * (double)gradient.Length, gradient.Length - 1));
+                            if (colorInversion) gradientNum = gradient.Length - gradientNum - 1;
                             Console.Write(gradient[gradientNum]);
                             break;
                         case DRAW_IMAGE_GREY:
                             avgSum = (int)(findLightness(sumR, sumG, sumB) * 255.0 / 100.0);
+                            if (colorInversion) avgSum = 255 - avgSum;
                             Console.Write("\x1b[48;2;" + avgSum + ";" + avgSum + ";" + avgSum + "m");
                             Console.Write(" ");
                             break;
                         case DRAW_SYMBOLS_OLD_STYLE:
                             avgSum = (int)(sumR * sumG * sumB / 255.0 / 255.0 * coefficient);
+                            if (colorInversion) avgSum = 255 - avgSum;
                             Console.Write(gradient[(int)Math.Max(0, Math.Min(avgSum / 255.0 * (double)gradient.Length, gradient.Length - 1))]);
                             break;
                         case DRAW_IMAGE_COLOR:
+                            if (colorInversion) { sumR = 255 - sumR; sumG = 255 - sumG; sumB = 255 - sumB; }
                             Console.Write("\x1b[48;2;" + sumR + ";" + sumG + ";" + sumB + "m");
                             Console.Write(" ");
                             break;
                         case DRAW_IMAGE_NEW_GRADIENT:
                             double L = findLightness(sumR, sumG, sumB);
+                            if (colorInversion) L = 100 - L;
                             Console.Write(findSymbolByLightness(L));
+                            break;
+                        case DRAW_CUSTOM_GRADIENT:
+                            L = findLightness(sumR, sumG, sumB);
+                            if (colorInversion) L = 100 - L;
+                            Console.Write(findSymbolByLightnessCustom(L));
                             break;
 
                     }
@@ -214,6 +250,7 @@ namespace ImageToSymbols
                     if (i % changeW == 0 && diffW >= 0) wAspect = biggerAspectNumW > smallerAspectNumW ? wAspect + 1 : wAspect - 1;
                     if (diffW == 0) { diffW = -1; }
                 }
+                Console.Write("\n");
                 diffW = changeW * aspectNumMinW;
                 if (aspectNumMinW == 0) diffW = -1;
                 imageCordX = 0;
@@ -222,6 +259,7 @@ namespace ImageToSymbols
                 if (diffH == 0) diffH--;
             }
             Console.Write("\x1b[48;2;" + 0 + ";" + 0 + ";" + 0 + "m");
+            Console.Write("");
         }
 
         static void Main(string[] args)
@@ -234,9 +272,6 @@ namespace ImageToSymbols
             Console.BufferHeight = Console.LargestWindowHeight + 10;
             ConsoleHelper.setupConsole();
             setupGradient();
-            //Console.WriteLine(lightnessList.Length);
-            //Console.WriteLine("\"" + lightnessToSymbol[lightnessList[0]] + "\"");
-            //Console.WriteLine(findSymbolByLightness(1) + " " + findSymbolByLightness(10) + " " + findSymbolByLightness(100));
 
             bool programmRunning = true;
             while (programmRunning)
@@ -245,6 +280,7 @@ namespace ImageToSymbols
                 Console.WriteLine("1. Transform an image to symbols");
                 Console.WriteLine("2. Change the brightness coefficient");
                 Console.WriteLine("3. Change color inversion");
+                Console.WriteLine("4. Add custom gradient");
                 ConsoleKey input = Console.ReadKey(true).Key;
                 switch (input)
                 {
@@ -255,15 +291,17 @@ namespace ImageToSymbols
                         try
                         {
                             Bitmap image = new Bitmap(@path, true);
-                            bool check = true;
-                            while (check)
+                            bool imageConvertRunning = true;
+                            while (imageConvertRunning)
                             {
                                 Console.Clear();
                                 normalizeImage(image);
+                                String[] pathArray = path.Split("\\");
+                                Console.Title = "Image to symbols: " + pathArray[pathArray.Length - 1] + " - " + width + "x" + (int)(height * fontAspect);
                                 convertImage(image);
                                 Console.BackgroundColor = ConsoleColor.Black;
                                 Console.ForegroundColor = ConsoleColor.White;
-                                Console.WriteLine("Press F if you want to changeW the coefficient");
+                                //Console.WriteLine("Press F if you want to changeW the coefficient");
                                 
                                 ConsoleKey key = Console.ReadKey(true).Key;
                                 switch (key)
@@ -273,8 +311,23 @@ namespace ImageToSymbols
                                         Console.WriteLine("Enter the coefficient");
                                         coefficient = Convert.ToDouble(Console.ReadLine().Replace(',', '.'));
                                         break;
+                                    case ConsoleKey.LeftArrow:
+                                        image.RotateFlip(RotateFlipType.Rotate270FlipNone); break;
+                                    case ConsoleKey.RightArrow:
+                                        image.RotateFlip(RotateFlipType.Rotate90FlipNone); break;
+                                    case ConsoleKey.I:
+                                        colorInversion = !colorInversion; break;
+                                    case ConsoleKey.D1:
+                                        drawMode = DRAW_IMAGE_NEW_GRADIENT; break;
+                                    case ConsoleKey.D2:
+                                        drawMode = DRAW_IMAGE_COLOR; break;
+                                    case ConsoleKey.D3:
+                                        drawMode = DRAW_IMAGE_GREY; break;
+                                    case ConsoleKey.D4:
+                                        drawMode = DRAW_CUSTOM_GRADIENT; break;
                                     default:
-                                        check = false;
+                                        Console.Title = "Image to symbols";
+                                        imageConvertRunning = false;
                                         break;
                                 }
                             }
@@ -287,33 +340,33 @@ namespace ImageToSymbols
                         break;
                     case ConsoleKey.D2:
                         Console.WriteLine("Enter the coefficient (standart is 2)");
-                        try
-                        {
-                            coefficient = Convert.ToDouble(Console.ReadLine());
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine(e.Message);
-                            Console.ReadKey();
-                        }
+                        try { coefficient = Convert.ToDouble(Console.ReadLine()); }
+                        catch (Exception e) { Console.WriteLine(e.Message); Console.ReadKey(); }
                         break;
                     case ConsoleKey.D3:
                         Console.Clear();
-                        if (colorInversion)
-                        {
-                            Console.WriteLine("Color inversion is on");
-                        }
-                        else
-                        {
-                            Console.WriteLine("Color inversion is off");
-                        }
-                        Console.WriteLine("\nIf you want to leave it that way, press ESC");
-                        Console.WriteLine("If not, press any button");
-                        if (Console.ReadKey(true).Key == ConsoleKey.Escape) break;
                         colorInversion = !colorInversion;
+                        if (colorInversion) Console.WriteLine("Color inversion is on");
+                        else Console.WriteLine("Color inversion is off");
+                        Console.ReadKey();
                         break;
                     case ConsoleKey.D4:
-                        
+                        Console.Clear();
+                        Console.WriteLine("Enter custom gradient as a string of symbols of english alphabet (capital or lower) and default special symbols");
+                        String inputString = Console.ReadLine();
+                        customGradient = inputString.ToCharArray();
+                        List<int> listCustomGradient = new List<int>();
+                        for (int i = 0; i < customGradient.Length; i++)
+                        {
+                            listCustomGradient.Add(symbolLightness[customGradient[i]]);
+                        }
+                        customGradientLightness = listCustomGradient.ToArray();
+                        customGradientLightness = customGradientLightness.OrderBy(i => i).ToArray();
+                        double aspect = 999999 / customGradientLightness[customGradientLightness.Length - 1];
+                        customScaledLightness = new int[customGradientLightness.Length];
+                        for (int i = 0; i < customGradientLightness.Length; i++) customScaledLightness[i] = (int)(customGradientLightness[i] * aspect);
+                        customGradientLightness.ToList().ForEach(i => Console.WriteLine(lightnessToSymbol[i] + " " + i));
+                        Console.ReadKey();
                         break;
                     case ConsoleKey.Escape:
                         programmRunning = false;
