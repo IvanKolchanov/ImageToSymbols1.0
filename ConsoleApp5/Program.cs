@@ -1,6 +1,5 @@
 ﻿using ConsoleExtender;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
@@ -17,8 +16,8 @@ namespace ImageToSymbols
 
         private static int height;
         private static int width;
-        private static int drawMode = 4;
-        private const int DRAW_SYMBOLS = 0, DRAW_IMAGE_COLOR = 1, DRAW_IMAGE_GREY = 2, DRAW_SYMBOLS_OLD_STYLE = 3, DRAW_IMAGE_NEW_GRADIENT = 4, DRAW_CUSTOM_GRADIENT = 5;
+        private static int drawMode = DRAW_SYMBOLS;
+        private const int DRAW_SYMBOLS = 0, DRAW_IMAGE_COLOR = 1, DRAW_IMAGE_GREY = 2, DRAW_CUSTOM_GRADIENT = 3, DRAW_SYMBOLS_OLD_STYLE = 4;
         private static double coefficient = 1;
         private static double fontAspect = 2.0;
         private static bool colorInversion = false;
@@ -205,45 +204,42 @@ namespace ImageToSymbols
                             sumB += pixel.B;
                         }
                     }
-                    sumR /= (wAspect * hAspect);
-                    sumG /= (wAspect * hAspect);
-                    sumB /= (wAspect * hAspect);
+                    sumR /= (int)(wAspect * hAspect / coefficient);
+                    sumG /= (int)(wAspect * hAspect / coefficient);
+                    sumB /= (int)(wAspect * hAspect / coefficient);
+                    sumR = Math.Min(255, sumR);
+                    sumG = Math.Min(255, sumG);
+                    sumB = Math.Min(255, sumB);
                     int avgSum;
                     switch (drawMode)
                     {
                         case DRAW_SYMBOLS:
-                            avgSum = (int)(findLightness(sumR, sumG, sumB) * 255.0 / 100.0);
-                            int gradientNum = (int)Math.Max(0, Math.Min(avgSum / 255.0 * (double)gradient.Length, gradient.Length - 1));
-                            if (colorInversion) gradientNum = gradient.Length - gradientNum - 1;
-                            Console.Write(gradient[gradientNum]);
-                            break;
-                        case DRAW_IMAGE_GREY:
-                            avgSum = (int)(findLightness(sumR, sumG, sumB) * 255.0 / 100.0);
-                            if (colorInversion) avgSum = 255 - avgSum;
-                            Console.Write("\x1b[48;2;" + avgSum + ";" + avgSum + ";" + avgSum + "m");
-                            Console.Write(" ");
-                            break;
-                        case DRAW_SYMBOLS_OLD_STYLE:
-                            avgSum = (int)(sumR * sumG * sumB / 255.0 / 255.0 * coefficient);
-                            if (colorInversion) avgSum = 255 - avgSum;
-                            Console.Write(gradient[(int)Math.Max(0, Math.Min(avgSum / 255.0 * (double)gradient.Length, gradient.Length - 1))]);
+                            double L = findLightness(sumR, sumG, sumB);
+                            L = Math.Min(L, 100);
+                            if (colorInversion) L = 100 - L;
+                            Console.Write(findSymbolByLightness(L));
                             break;
                         case DRAW_IMAGE_COLOR:
                             if (colorInversion) { sumR = 255 - sumR; sumG = 255 - sumG; sumB = 255 - sumB; }
                             Console.Write("\x1b[48;2;" + sumR + ";" + sumG + ";" + sumB + "m");
                             Console.Write(" ");
                             break;
-                        case DRAW_IMAGE_NEW_GRADIENT:
-                            double L = findLightness(sumR, sumG, sumB);
-                            if (colorInversion) L = 100 - L;
-                            Console.Write(findSymbolByLightness(L));
-                            break;
+                        case DRAW_IMAGE_GREY:
+                            avgSum = (int)(findLightness(sumR, sumG, sumB) * 255.0 / 100.0);
+                            if (colorInversion) avgSum = 255 - avgSum;
+                            Console.Write("\x1b[48;2;" + avgSum + ";" + avgSum + ";" + avgSum + "m");
+                            Console.Write(" ");
+                            break;  
                         case DRAW_CUSTOM_GRADIENT:
                             L = findLightness(sumR, sumG, sumB);
                             if (colorInversion) L = 100 - L;
                             Console.Write(findSymbolByLightnessCustom(L));
                             break;
-
+                        case DRAW_SYMBOLS_OLD_STYLE:
+                            avgSum = (int)(sumR * sumG * sumB / 255.0 / 255.0);
+                            if (colorInversion) avgSum = 255 - avgSum;
+                            Console.Write(gradient[(int)Math.Max(0, Math.Min((int)(avgSum / 255.0 * (double)gradient.Length), gradient.Length - 1))]);
+                            break;
                     }
 
                     imageCordX += wAspect;
@@ -276,11 +272,15 @@ namespace ImageToSymbols
             bool programmRunning = true;
             while (programmRunning)
             {
+                Console.Clear();
+                Console.Write("");
                 Console.WriteLine("Press the number of the command on your keyboard");
                 Console.WriteLine("1. Transform an image to symbols");
                 Console.WriteLine("2. Change the brightness coefficient");
                 Console.WriteLine("3. Change color inversion");
                 Console.WriteLine("4. Add custom gradient");
+                Console.WriteLine("5. Read the instruction");
+                Console.WriteLine("6. Return to default settings");
                 ConsoleKey input = Console.ReadKey(true).Key;
                 switch (input)
                 {
@@ -301,8 +301,6 @@ namespace ImageToSymbols
                                 convertImage(image);
                                 Console.BackgroundColor = ConsoleColor.Black;
                                 Console.ForegroundColor = ConsoleColor.White;
-                                //Console.WriteLine("Press F if you want to changeW the coefficient");
-                                
                                 ConsoleKey key = Console.ReadKey(true).Key;
                                 switch (key)
                                 {
@@ -318,13 +316,20 @@ namespace ImageToSymbols
                                     case ConsoleKey.I:
                                         colorInversion = !colorInversion; break;
                                     case ConsoleKey.D1:
-                                        drawMode = DRAW_IMAGE_NEW_GRADIENT; break;
+                                        drawMode = DRAW_SYMBOLS; break;
                                     case ConsoleKey.D2:
                                         drawMode = DRAW_IMAGE_COLOR; break;
                                     case ConsoleKey.D3:
                                         drawMode = DRAW_IMAGE_GREY; break;
                                     case ConsoleKey.D4:
+                                        if (customGradient == null)
+                                        {
+                                            Console.WriteLine("You don't have a custom gradient set up. \n Do it using button 4. in the main menu");
+                                            break;
+                                        }
                                         drawMode = DRAW_CUSTOM_GRADIENT; break;
+                                    case ConsoleKey.D0:
+                                        drawMode = DRAW_SYMBOLS_OLD_STYLE; break;
                                     default:
                                         Console.Title = "Image to symbols";
                                         imageConvertRunning = false;
@@ -339,7 +344,8 @@ namespace ImageToSymbols
                         }
                         break;
                     case ConsoleKey.D2:
-                        Console.WriteLine("Enter the coefficient (standart is 2)");
+                        Console.Clear();
+                        Console.WriteLine("Enter the coefficient (standart is 1.0)");
                         try { coefficient = Convert.ToDouble(Console.ReadLine()); }
                         catch (Exception e) { Console.WriteLine(e.Message); Console.ReadKey(); }
                         break;
@@ -366,6 +372,36 @@ namespace ImageToSymbols
                         customScaledLightness = new int[customGradientLightness.Length];
                         for (int i = 0; i < customGradientLightness.Length; i++) customScaledLightness[i] = (int)(customGradientLightness[i] * aspect);
                         customGradientLightness.ToList().ForEach(i => Console.WriteLine(lightnessToSymbol[i] + " " + i));
+                        Console.ReadKey();
+                        break;
+                    case ConsoleKey.D5:
+                        Console.Clear();
+                        Console.WriteLine("The instructions for the main menu are quite clear, but there are a few hidden commands for 1. menu screen");
+                        Console.WriteLine("After submitting a photo for the convertion while viewing it is possible to change the image in a few ways:");
+                        Console.WriteLine(" * pressing F allows the user to change the brightness of the image");
+                        Console.WriteLine(" * pressing I allows the user to change the output into inverse mode (inverse brightness, color)");
+                        Console.WriteLine(" * pressing 1 puts the conversion into symbol mode (default mode)");
+                        Console.WriteLine(" * pressing 2 puts the conversion into color mode");
+                        Console.WriteLine(" * pressing 3 puts the conversion into black and white color mode");
+                        Console.WriteLine(" * pressing 4 puts the conversion into custom gradient symbol mode (only works if you set it up in main menu)");
+                        Console.WriteLine(" * pressing RightArrow (->) turns the image 90 degrees clockwise");
+                        Console.WriteLine(" * pressing LeftArrow (<-) turns the image 90 degrees counter-clockwise");
+                        Console.WriteLine(" ** pressing 0 puts the conversion into old symbol mode, used in the original program\n");
+                        Console.WriteLine("The quality of the image is dependent on the size of the font (the smaller the font, the better the image)");
+                        Console.WriteLine("You can make the font smaller by right clicking on the console (smallest font would be 5 pixels wide)");
+                        Console.WriteLine("For some laptop users it is possible to make it even smaller (1 pixel wide) by resizing the window with fingers/touchpad");
+                        Console.WriteLine("Press any key to continue");
+                        Console.ReadKey();
+                        break;
+                    case ConsoleKey.D6:
+                        Console.Clear();
+                        Console.WriteLine("The settings were dropped to default");
+                        coefficient = 1;
+                        drawMode = DRAW_SYMBOLS;
+                        customGradient = null;
+                        customGradientLightness = null;
+                        customScaledLightness = null;
+                        Console.WriteLine("Press any key to go back to main menu");
                         Console.ReadKey();
                         break;
                     case ConsoleKey.Escape:
