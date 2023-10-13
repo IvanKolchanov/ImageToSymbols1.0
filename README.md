@@ -26,7 +26,7 @@
 
 ## Instructions for work are here and in the program itself:
 
-  ### Main menu: <br>
+### Main menu: <br>
   1. Transform an image to symbols <br>
   2. Change the brightness coefficient <br>
   3. Change color inversion <br>
@@ -35,22 +35,22 @@
   6. Set up lower border for ' ' symbol <br>
   7. Read the instruction <br>
   8. Return to default settings <br>
-     
-  ### Output menu: <br><br>
-    The instructions for the main menu are quite clear, but there are a few hidden commands for 1. menu screen <br><br>
-    * After submitting a photo for the convertion while viewing it is possible to change the image in a few ways: <br>
-    * pressing F allows the user to change the brightness of the image <br>
-    * pressing I allows the user to change the output into inverse mode (inverse brightness, color) <br>
-    * pressing 1 puts the conversion into symbol mode (default mode) <br>
-    * pressing 2 puts the conversion into color mode <br>
-    * pressing 3 puts the conversion into black and white color mode <br>
-    * pressing 4 puts the conversion into custom gradient symbol mode (only works if you set it up in main menu) <br>
-    * pressing RightArrow (->) turns the image 90 degrees clockwise <br>
-    * pressing LeftArrow (<-) turns the image 90 degrees counter-clockwise <br>
-    * pressing 0 puts the conversion into old symbol mode, used in the original program <br>
-    The quality of the image is dependent on the size of the font (the smaller the font, the better the image) <br>
-    You can make the font smaller by right clicking on the console (smallest font would be 5 pixels wide) <br>
-    For some laptop users it is possible to make it even smaller (1 pixel wide) by resizing the window with fingers/touchpad <br>
+<!-- -->
+### Output menu: <br><br>
+  * After submitting a photo for the convertion while viewing it is possible to change the image in a few ways:
+  * pressing F allows the user to change the brightness of the image
+  * pressing I allows the user to change the output into inverse mode (inverse brightness, color)
+  * pressing 1 puts the conversion into symbol mode (default mode)
+  * pressing 2 puts the conversion into color mode
+  * pressing 3 puts the conversion into black and white color mode
+  * pressing 4 puts the conversion into custom gradient symbol mode (only works if you set it up in main menu)
+  * pressing RightArrow (->) turns the image 90 degrees clockwise
+  * pressing LeftArrow (<-) turns the image 90 degrees counter-clockwise
+  * pressing 0 puts the conversion into old symbol mode, used in the original program
+
+The quality of the image is dependent on the size of the font (the smaller the font, the better the image) <br>
+You can make the font smaller by right clicking on the console (smallest font would be 5 pixels wide) <br>
+For some laptop users it is possible to make it even smaller (1 pixel wide) by resizing the window with fingers/touchpad <br>
 
 ## Examples: <br>
   Original image: <br>
