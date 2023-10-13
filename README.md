@@ -22,11 +22,12 @@ How does the gradient work:
   7. Then the program calculates average lightness for group's of pixels each representing one symbol and depending on the lightness the most appropriate symbol is chosen
 
 !!! Feature/bug/strange behaviour of windows is that on some devices it is possible to set the font to umimanagably small values like 1 pixel wide and 2 pixels high, even though through consoles setting the smallest possible is 5 to 10 pixels (it says that the actual values are 2 to 5, but it is proven wrong if you take a photo of the console)!!!
+
 !!! Using the feature you can make the font very small just by rescaling the console window with your fingers on a touchsreen or on a touchpad, allowing the user to output images in almost original quality!!!
 
 Instructions for work are here and in the program itself:
+
   Main menu:
-     Press the number of the command on your keyboard
      1. Transform an image to symbols
      2. Change the brightness coefficient
      3. Change color inversion
@@ -35,9 +36,10 @@ Instructions for work are here and in the program itself:
      6. Set up lower border for ' ' symbol
      7. Read the instruction
      8. Return to default settings
+     
   Output menu:
     The instructions for the main menu are quite clear, but there are a few hidden commands for 1. menu screen
-    Console.WriteLine("After submitting a photo for the convertion while viewing it is possible to change the image in a few ways:
+      * After submitting a photo for the convertion while viewing it is possible to change the image in a few ways:
       * pressing F allows the user to change the brightness of the image
       * pressing I allows the user to change the output into inverse mode (inverse brightness, color)
       * pressing 1 puts the conversion into symbol mode (default mode)
