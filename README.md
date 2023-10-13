@@ -1,9 +1,9 @@
 # ImageToSymbols1.0
-##Main goal of the program:
+## Main goal of the program:
   * converting an image into symbols as close as possible to the initial image
   * adapting the program for different fonts, sizes of console and photo orientation
 
-##Added features:
+## Added features:
   * drawing the image in RGB color format
   * drawing the image in black and white format using 256 shades of grey
   * inverting the images brightness (for symbols and black&white) and colors for color mode
@@ -11,7 +11,7 @@
   * adding a custom gradient for the output (any special symbols, lower and upper letters of english alphabet, numbers and '\u25A0' (white square)
   * changing the lower and upper borders for ' ' and '\u25A0' (white box) respectively
 
-##How does the gradient work:
+## How does the gradient work:
   1. I analyzed all standart special symbols - ~!@#$%^&*()_+-=[]{}|\'";:/?.>,<` , numbers and lowercase and uppercase english alphabet - 94 symbols, using a program I wrote
   2. For determing the brightness of the symbol I found the average of Lightness of its pixels (to calculate lightness I transformed RGB values to linear and used recommened formulas:
   ![image](https://github.com/IvanKolchanov/ImageToSymbols1.0/assets/83294629/60fc68ec-0ae4-4096-8cb8-163cdcf820d1)
@@ -24,9 +24,9 @@
 !!! Feature/bug/strange behaviour of windows is that on some devices it is possible to set the font to umimanagably small values like 1 pixel wide and 2 pixels high, even though through consoles setting the smallest possible is 5 to 10 pixels (it says that the actual values are 2 to 5, but it is proven wrong if you take a photo of the console)!!!  <br>
 !!! Using the feature you can make the font very small just by rescaling the console window with your fingers on a touchsreen or on a touchpad, allowing the user to output images in almost original quality!!!
 
-##Instructions for work are here and in the program itself:
+## Instructions for work are here and in the program itself:
 
-  ###Main menu: <br>
+  ### Main menu: <br>
   1. Transform an image to symbols <br>
   2. Change the brightness coefficient <br>
   3. Change color inversion <br>
@@ -36,7 +36,7 @@
   7. Read the instruction <br>
   8. Return to default settings <br>
      
-  ###Output menu: <br><br>
+  ### Output menu: <br><br>
     The instructions for the main menu are quite clear, but there are a few hidden commands for 1. menu screen <br><br>
     * After submitting a photo for the convertion while viewing it is possible to change the image in a few ways: <br>
     * pressing F allows the user to change the brightness of the image <br>
@@ -52,7 +52,7 @@
     You can make the font smaller by right clicking on the console (smallest font would be 5 pixels wide) <br>
     For some laptop users it is possible to make it even smaller (1 pixel wide) by resizing the window with fingers/touchpad <br>
 
-##Examples: <br>
+## Examples: <br>
   Original image: <br>
   ![4](https://github.com/IvanKolchanov/ImageToSymbols1.0/assets/83294629/fa3b00b5-87a3-477a-9f23-414548ab41fe)
   
