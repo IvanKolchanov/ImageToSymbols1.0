@@ -36,8 +36,8 @@ Instructions for work are here and in the program itself:
   7. Read the instruction <br>
   8. Return to default settings <br>
      
-  Output menu: <br>
-    The instructions for the main menu are quite clear, but there are a few hidden commands for 1. menu screen <br>
+  Output menu: <br><br>
+    The instructions for the main menu are quite clear, but there are a few hidden commands for 1. menu screen <br><br>
     * After submitting a photo for the convertion while viewing it is possible to change the image in a few ways: <br>
     * pressing F allows the user to change the brightness of the image <br>
     * pressing I allows the user to change the output into inverse mode (inverse brightness, color) <br>
