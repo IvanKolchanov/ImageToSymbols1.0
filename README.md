@@ -21,8 +21,8 @@
   6. Then depending on the size of the image the program changes the size of the console for the one with the best resolution
   7. Then the program calculates average lightness for group's of pixels each representing one symbol and depending on the lightness the most appropriate symbol is chosen
 
-!!! Feature/bug/strange behaviour of windows is that on some devices it is possible to set the font to umimanagably small values like 1 pixel wide and 2 pixels high, even though through consoles setting the smallest possible is 5 to 10 pixels (it says that the actual values are 2 to 5, but it is proven wrong if you take a photo of the console)!!!  <br>
-!!! Using the feature you can make the font very small just by rescaling the console window with your fingers on a touchsreen or on a touchpad, allowing the user to output images in almost original quality!!!
+**Feature/bug/strange behaviour of windows is that on some devices it is possible to set the font to umimanagably small values like 1 pixel wide and 2 pixels high, even though through consoles setting the smallest possible is 5 to 10 pixels (it says that the actual values are 2 to 5, but it is proven wrong if you take a photo of the console)  <br>
+Using the feature you can make the font very small just by rescaling the console window with your fingers on a touchsreen or on a touchpad, allowing the user to output images in almost original quality**
 
 ## Instructions for work are here and in the program itself:
 
