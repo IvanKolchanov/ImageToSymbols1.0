@@ -38,49 +38,49 @@ Instructions for work are here and in the program itself:
      
   Output menu: <br>
     The instructions for the main menu are quite clear, but there are a few hidden commands for 1. menu screen <br>
-      * After submitting a photo for the convertion while viewing it is possible to change the image in a few ways:
-      * pressing F allows the user to change the brightness of the image
-      * pressing I allows the user to change the output into inverse mode (inverse brightness, color)
-      * pressing 1 puts the conversion into symbol mode (default mode)
-      * pressing 2 puts the conversion into color mode
-      * pressing 3 puts the conversion into black and white color mode
-      * pressing 4 puts the conversion into custom gradient symbol mode (only works if you set it up in main menu)
-      * pressing RightArrow (->) turns the image 90 degrees clockwise
-      * pressing LeftArrow (<-) turns the image 90 degrees counter-clockwise
-      ** pressing 0 puts the conversion into old symbol mode, used in the original program
-    The quality of the image is dependent on the size of the font (the smaller the font, the better the image)
-    You can make the font smaller by right clicking on the console (smallest font would be 5 pixels wide)
-    For some laptop users it is possible to make it even smaller (1 pixel wide) by resizing the window with fingers/touchpad
+      * After submitting a photo for the convertion while viewing it is possible to change the image in a few ways: <br>
+      * pressing F allows the user to change the brightness of the image <br>
+      * pressing I allows the user to change the output into inverse mode (inverse brightness, color) <br>
+      * pressing 1 puts the conversion into symbol mode (default mode) <br>
+      * pressing 2 puts the conversion into color mode <br>
+      * pressing 3 puts the conversion into black and white color mode <br>
+      * pressing 4 puts the conversion into custom gradient symbol mode (only works if you set it up in main menu) <br>
+      * pressing RightArrow (->) turns the image 90 degrees clockwise <br>
+      * pressing LeftArrow (<-) turns the image 90 degrees counter-clockwise <br>
+      ** pressing 0 puts the conversion into old symbol mode, used in the original program <br>
+    The quality of the image is dependent on the size of the font (the smaller the font, the better the image) <br>
+    You can make the font smaller by right clicking on the console (smallest font would be 5 pixels wide) <br>
+    For some laptop users it is possible to make it even smaller (1 pixel wide) by resizing the window with fingers/touchpad <br>
 
-Examples:
-  Original image:
+Examples: <br>
+  Original image: <br>
   ![4](https://github.com/IvanKolchanov/ImageToSymbols1.0/assets/83294629/fa3b00b5-87a3-477a-9f23-414548ab41fe)
   
-  Image to symbols (font - 5 by 10 pixels, image - 576x286 symbols):
+  Image to symbols (font - 5 by 10 pixels, image - 576x286 symbols): <br>
   ![image](https://github.com/IvanKolchanov/ImageToSymbols1.0/assets/83294629/65cb45f4-41e2-42ee-b836-e2bedecc064a)
   
-  Image to color (font - 5 by 10 pixels, image - 576x286 symbols):
+  Image to color (font - 5 by 10 pixels, image - 576x286 symbols): <br>
   ![image](https://github.com/IvanKolchanov/ImageToSymbols1.0/assets/83294629/09eb9fb7-3edf-42e4-8bc7-b9ece60e6328)
   
-  Image to black&white (font - 5 by 10 pixels, image - 576x286 symbols):
+  Image to black&white (font - 5 by 10 pixels, image - 576x286 symbols): <br>
   ![image](https://github.com/IvanKolchanov/ImageToSymbols1.0/assets/83294629/5cedfb48-edd6-4afb-b37a-5a02a4cd58eb)
   
-  Image to symbols, custom gradient (font - 5 by 10 pixels, image - 576x286 symbols, gradient - "abc123)!-"):
+  Image to symbols, custom gradient (font - 5 by 10 pixels, image - 576x286 symbols, gradient - "abc123)!-"): <br>
   ![image](https://github.com/IvanKolchanov/ImageToSymbols1.0/assets/83294629/f201ad8c-deb4-4afc-a5b5-0fcf6523962e)
   
-  Image to color (font - 1 by 2 pixels, image - 761x378 (original resolution)):
+  Image to color (font - 1 by 2 pixels, image - 761x378 (original resolution)): <br>
   ![image](https://github.com/IvanKolchanov/ImageToSymbols1.0/assets/83294629/3b356ea8-8fdb-4882-b912-da548a533a69)
   
-  Image to symbols with inversion (font - 1 by 2 pixels, image - 761x378):
+  Image to symbols with inversion (font - 1 by 2 pixels, image - 761x378): <br>
   ![image](https://github.com/IvanKolchanov/ImageToSymbols1.0/assets/83294629/a020f659-96bc-4d02-8f07-2fe22d2d9b54)
   
-  Image to color with inversion (font - 1 by 2 pixels, image - 761x378):
+  Image to color with inversion (font - 1 by 2 pixels, image - 761x378): <br>
   ![image](https://github.com/IvanKolchanov/ImageToSymbols1.0/assets/83294629/c0fd7f12-0f3e-4f7a-8eac-bb597b450089)
   
-  Image to color with lightness coefficient changed to 1.1 (def - 1.0) (font - 1 by 2 pixels, image - 761x378):
+  Image to color with lightness coefficient changed to 1.1 (def - 1.0) (font - 1 by 2 pixels, image - 761x378): <br>
   ![image](https://github.com/IvanKolchanov/ImageToSymbols1.0/assets/83294629/ee3c0f27-4225-41bc-b7fa-60e27bcee9ed)
   
-  Image to color with lightness coefficient changed to 1.1 (def - 1.0) and inversion (font - 1 by 2 pixels, image - 761x378):
+  Image to color with lightness coefficient changed to 1.1 (def - 1.0) and inversion (font - 1 by 2 pixels, image - 761x378): <br>
   ![image](https://github.com/IvanKolchanov/ImageToSymbols1.0/assets/83294629/57b16fee-e132-4a44-b2d3-b87e638c5b6b)
   
 
