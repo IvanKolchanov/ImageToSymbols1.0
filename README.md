@@ -21,24 +21,23 @@ How does the gradient work:
   6. Then depending on the size of the image the program changes the size of the console for the one with best resolution
   7. Then the program calculates average lightness for group's of pixels each representing one symbol and depending on the lightness the most appropriate symbol is chosen
 
-!!! Feature/bug/strange behaviour of windows is that on some devices it is possible to set the font to umimanagably small values like 1 pixel wide and 2 pixels high, even though through consoles setting the smallest possible is 5 to 10 pixels (it says that the actual values are 2 to 5, but it is proven wrong if you take a photo of the console)!!!
-
+!!! Feature/bug/strange behaviour of windows is that on some devices it is possible to set the font to umimanagably small values like 1 pixel wide and 2 pixels high, even though through consoles setting the smallest possible is 5 to 10 pixels (it says that the actual values are 2 to 5, but it is proven wrong if you take a photo of the console)!!!  <br>
 !!! Using the feature you can make the font very small just by rescaling the console window with your fingers on a touchsreen or on a touchpad, allowing the user to output images in almost original quality!!!
 
 Instructions for work are here and in the program itself:
 
-  Main menu:
-     1. Transform an image to symbols
-     2. Change the brightness coefficient
-     3. Change color inversion
-     4. Add custom gradient
-     5. Set up upper border for '\u25A0' symbol
-     6. Set up lower border for ' ' symbol
-     7. Read the instruction
-     8. Return to default settings
+  Main menu: <br>
+     1. Transform an image to symbols <br>
+     2. Change the brightness coefficient <br>
+     3. Change color inversion <br>
+     4. Add custom gradient <br>
+     5. Set up upper border for '\u25A0' symbol <br>
+     6. Set up lower border for ' ' symbol <br>
+     7. Read the instruction <br>
+     8. Return to default settings <br>
      
-  Output menu:
-    The instructions for the main menu are quite clear, but there are a few hidden commands for 1. menu screen
+  Output menu: <br>
+    The instructions for the main menu are quite clear, but there are a few hidden commands for 1. menu screen <br>
       * After submitting a photo for the convertion while viewing it is possible to change the image in a few ways:
       * pressing F allows the user to change the brightness of the image
       * pressing I allows the user to change the output into inverse mode (inverse brightness, color)
