@@ -18,7 +18,7 @@
   3. The perceived lightness is determined on the scale of 0.0 to 100.0. I took it with the precision of .4 decimal places and multiplied by 10000, because it is easier to save integer values
   4. The lightness values of symbols are uploaded to the program using a .txt file, which can be gotten for any given number of symbols if you are willing to run the program with another set
   5. The values of symbol were from around 50000 (5 out of 100 for ') to around 400000 (40 out of 100 for @). Therefore, during the start of the program the values are scaled depending on top and lower border for '\u25A0' (white square) and ' ' respectively
-  6. Then depending on the size of the image the program changes the size of the console for the one with best resolution
+  6. Then depending on the size of the image the program changes the size of the console for the one with the best resolution
   7. Then the program calculates average lightness for group's of pixels each representing one symbol and depending on the lightness the most appropriate symbol is chosen
 
 !!! Feature/bug/strange behaviour of windows is that on some devices it is possible to set the font to umimanagably small values like 1 pixel wide and 2 pixels high, even though through consoles setting the smallest possible is 5 to 10 pixels (it says that the actual values are 2 to 5, but it is proven wrong if you take a photo of the console)!!!  <br>
