@@ -37,6 +37,8 @@ Using the feature you can make the font very small just by rescaling the console
   7. Read the instruction <br>
   8. Return to default settings <br>
   9. Add completely custom gradient with any symbols after creating an analyzis file through program https://github.com/IvanKolchanov/AnalyzingBrigthnessOfSymbols
+<br>
+![image](https://github.com/IvanKolchanov/ImageToSymbols1.0/assets/83294629/9209e89d-f4b5-4f2c-9276-85425382ddfa)
 
 ### Output menu:
   * After submitting a photo for the convertion while viewing it is possible to change the image in a few ways:
