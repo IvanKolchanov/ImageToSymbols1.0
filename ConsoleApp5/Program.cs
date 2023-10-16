@@ -13,6 +13,7 @@ namespace ImageToSymbols
         private static Dictionary<char, int> symbolLightness = new Dictionary<char, int>();
         private static Dictionary<int, char> lightnessToSymbol = new Dictionary<int, char>();
         private static int[] lightnessList;
+        private static int topBorder = 950000, lowerBorder = 25000;
 
         private static int height;
         private static int width;
@@ -26,13 +27,25 @@ namespace ImageToSymbols
         private static char[] customGradient;
         private static int[] customGradientLightness, customScaledLightness;
 
-        private static void setupGradient()
+        private static void setupGradient(String customPath)
         {
-            StreamReader sr = new StreamReader("C:\\Users\\kolch\\source\\repos\\w1ano\\ImageToSymbols1.0\\ConsoleApp5\\gradientSymbols.txt");
+            String path;
+            if (customPath.Length == 0) {
+                path = Environment.CurrentDirectory;
+                String[] splitPath = path.Split("\\");
+                path = "";
+                for (int i = 0; i < splitPath.Length - 3; i++)
+                {
+                    path += splitPath[i] + "\\";
+                }
+                path += "gradientSymbols.txt";
+            }else path = customPath;
+            
+            StreamReader sr = new StreamReader(path);
             String line = sr.ReadLine();
-            symbolLightness.Add(' ', 0);
+            symbolLightness.Add(' ', lowerBorder);
             symbolLightness.Add('\u25A0', 1000000);
-            lightnessToSymbol.Add(0, ' ');
+            lightnessToSymbol.Add(lowerBorder, ' ');
             lightnessToSymbol.Add(1000000, '\u25A0');
             while (line != null)
             {
@@ -44,7 +57,6 @@ namespace ImageToSymbols
             int[] lightnessListInt = lightnessToSymbol.Keys.ToArray();
             lightnessList = lightnessListInt.OrderBy(x => x).ToArray();
 
-            int topBorder = 999999;
             double aspect = (double)topBorder / lightnessList[lightnessList.Length - 2];
             char replaceVal = lightnessToSymbol[lightnessList[lightnessList.Length - 2]];
             lightnessToSymbol.Remove(lightnessList[lightnessList.Length - 2]);
@@ -68,11 +80,7 @@ namespace ImageToSymbols
         {
             int integerL = (int)(L * 10000.0);
             int id = Array.BinarySearch(lightnessList, integerL);
-            if (id < 0)
-            {
-                if (-id == lightnessList.Length - 1) id = -id;
-                else id = -id - 2;
-            }
+            if (id < 0) id = -id - 1;
             return lightnessToSymbol[lightnessList[id]];
         }
 
@@ -80,11 +88,7 @@ namespace ImageToSymbols
         {
             int integerL = (int)(L * 10000.0);
             int id = Array.BinarySearch(customScaledLightness, integerL);
-            if (id < 0)
-            {
-                if (-id == customScaledLightness.Length - 1) id = -id;
-                else id = -id - 2;
-            }
+            if (id < 0) id = -id - 1;
             return lightnessToSymbol[customGradientLightness[Math.Min(Math.Max(id, 0), customGradientLightness.Length - 1)]];
         }
 
@@ -246,6 +250,7 @@ namespace ImageToSymbols
                     if (i % changeW == 0 && diffW >= 0) wAspect = biggerAspectNumW > smallerAspectNumW ? wAspect + 1 : wAspect - 1;
                     if (diffW == 0) { diffW = -1; }
                 }
+                Console.Write("\x1b[48;2;" + 0 + ";" + 0 + ";" + 0 + "m");
                 Console.Write("\n");
                 diffW = changeW * aspectNumMinW;
                 if (aspectNumMinW == 0) diffW = -1;
@@ -267,7 +272,7 @@ namespace ImageToSymbols
             Console.ForegroundColor = ConsoleColor.White;
             Console.BufferHeight = Console.LargestWindowHeight + 10;
             ConsoleHelper.setupConsole();
-            setupGradient();
+            setupGradient("");
 
             bool programmRunning = true;
             while (programmRunning)
@@ -279,8 +284,11 @@ namespace ImageToSymbols
                 Console.WriteLine("2. Change the brightness coefficient");
                 Console.WriteLine("3. Change color inversion");
                 Console.WriteLine("4. Add custom gradient");
-                Console.WriteLine("5. Read the instruction");
-                Console.WriteLine("6. Return to default settings");
+                Console.WriteLine("5. Set up upper border for \u25A0 symbol");
+                Console.WriteLine("6. Set up lower border for \" \" symbol");
+                Console.WriteLine("7. Read the instruction");
+                Console.WriteLine("8. Return to default settings");
+                Console.WriteLine("9. Add custom gradient file !instructions on Github!");
                 ConsoleKey input = Console.ReadKey(true).Key;
                 switch (input)
                 {
@@ -376,6 +384,20 @@ namespace ImageToSymbols
                         break;
                     case ConsoleKey.D5:
                         Console.Clear();
+                        Console.WriteLine("Enter the top border for \"\u25A0\" symbol (standart is 950000 out of 1000000, putting it lower than 400000 may result in unpredicted glitches");
+                        try { topBorder = Int32.Parse(Console.ReadLine()); }
+                        catch (Exception e) { Console.WriteLine(e.Message); topBorder = 950000; break; }
+                        setupGradient("");
+                        break;
+                    case ConsoleKey.D6:
+                        Console.Clear();
+                        Console.WriteLine("Enter the bottom border for \" \" symbol (standart is 25000 out of 1000000, putting it higher than 50000 may result in unpredicted glitches");
+                        try { lowerBorder = Int32.Parse(Console.ReadLine()); }
+                        catch (Exception e) { Console.WriteLine(e.Message); lowerBorder = 25000; break; }
+                        setupGradient("");
+                        break;
+                    case ConsoleKey.D7:
+                        Console.Clear();
                         Console.WriteLine("The instructions for the main menu are quite clear, but there are a few hidden commands for 1. menu screen");
                         Console.WriteLine("After submitting a photo for the convertion while viewing it is possible to change the image in a few ways:");
                         Console.WriteLine(" * pressing F allows the user to change the brightness of the image");
@@ -393,7 +415,7 @@ namespace ImageToSymbols
                         Console.WriteLine("Press any key to continue");
                         Console.ReadKey();
                         break;
-                    case ConsoleKey.D6:
+                    case ConsoleKey.D8:
                         Console.Clear();
                         Console.WriteLine("The settings were dropped to default");
                         coefficient = 1;
@@ -401,8 +423,25 @@ namespace ImageToSymbols
                         customGradient = null;
                         customGradientLightness = null;
                         customScaledLightness = null;
+                        lightnessList = null;
+                        lightnessToSymbol = new Dictionary<int, char>();
+                        symbolLightness = new Dictionary<char, int>();
+                        topBorder = 950000;
+                        lowerBorder = 25000;
+                        setupGradient("");
                         Console.WriteLine("Press any key to go back to main menu");
                         Console.ReadKey();
+                        break;
+                    case ConsoleKey.D9:
+                        Console.Clear();
+                        Console.WriteLine("Enter path to your custom gradient file");
+                        path = Console.ReadLine().Replace("\"", "");
+                        lightnessList = null;
+                        lightnessToSymbol = new Dictionary<int, char>();
+                        symbolLightness = new Dictionary<char, int>();
+                        topBorder = 950000;
+                        lowerBorder = 25000;
+                        setupGradient(path);
                         break;
                     case ConsoleKey.Escape:
                         programmRunning = false;
