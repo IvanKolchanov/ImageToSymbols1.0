@@ -36,9 +36,9 @@ Using the feature you can make the font very small just by rescaling the console
   6. Set up lower border for ' ' symbol <br>
   7. Read the instruction <br>
   8. Return to default settings <br>
-  9. Add completely custom gradient with any symbols after creating an analyzis file through program https://github.com/IvanKolchanov/AnalyzingBrigthnessOfSymbols
-<br>
-![image](https://github.com/IvanKolchanov/ImageToSymbols1.0/assets/83294629/9209e89d-f4b5-4f2c-9276-85425382ddfa)
+  9. Add completely custom gradient with any symbols after creating an analyzis file through program https://github.com/IvanKolchanov/AnalyzingBrigthnessOfSymbols <br>
+
+![image](https://github.com/IvanKolchanov/ImageToSymbols1.0/assets/83294629/7129abe2-218e-4c1e-90f6-b0664765abb5)
 
 ### Output menu:
   * After submitting a photo for the convertion while viewing it is possible to change the image in a few ways:
