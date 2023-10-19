@@ -44,9 +44,9 @@ namespace ImageToSymbols
             StreamReader sr = new StreamReader(path);
             String line = sr.ReadLine();
             symbolLightness.Add(' ', lowerBorder);
-            symbolLightness.Add('\u25A0', 1000000);
+            symbolLightness.Add('\u2588', 1000000);
             lightnessToSymbol.Add(lowerBorder, ' ');
-            lightnessToSymbol.Add(1000000, '\u25A0');
+            lightnessToSymbol.Add(1000000, '\u2588');
             while (line != null)
             {
                 String[] a = line.Split(" ");
@@ -208,9 +208,9 @@ namespace ImageToSymbols
                             sumB += pixel.B;
                         }
                     }
-                    sumR /= (int)(wAspect * hAspect / coefficient);
-                    sumG /= (int)(wAspect * hAspect / coefficient);
-                    sumB /= (int)(wAspect * hAspect / coefficient);
+                    sumR = (int)((double)sumR * coefficient / (wAspect * hAspect));
+                    sumG = (int)((double)sumG * coefficient / (wAspect * hAspect));
+                    sumB = (int)((double)sumB * coefficient / (wAspect * hAspect));
                     sumR = Math.Min(255, sumR);
                     sumG = Math.Min(255, sumG);
                     sumB = Math.Min(255, sumB);
@@ -251,7 +251,7 @@ namespace ImageToSymbols
                     if (diffW == 0) { diffW = -1; }
                 }
                 Console.Write("\x1b[48;2;" + 0 + ";" + 0 + ";" + 0 + "m");
-                Console.Write("\n");
+                if (j != height - 1) Console.Write("\n");
                 diffW = changeW * aspectNumMinW;
                 if (aspectNumMinW == 0) diffW = -1;
                 imageCordX = 0;
@@ -284,7 +284,7 @@ namespace ImageToSymbols
                 Console.WriteLine("2. Change the brightness coefficient");
                 Console.WriteLine("3. Change color inversion");
                 Console.WriteLine("4. Add custom gradient");
-                Console.WriteLine("5. Set up upper border for \u25A0 symbol");
+                Console.WriteLine("5. Set up upper border for \u2588 symbol");
                 Console.WriteLine("6. Set up lower border for \" \" symbol");
                 Console.WriteLine("7. Read the instruction");
                 Console.WriteLine("8. Return to default settings");
@@ -305,7 +305,7 @@ namespace ImageToSymbols
                                 Console.Clear();
                                 normalizeImage(image);
                                 String[] pathArray = path.Split("\\");
-                                Console.Title = "Image to symbols: " + pathArray[pathArray.Length - 1] + " - " + width + "x" + (int)(height * fontAspect);
+                                //Console.Title = "Image to symbols: " + pathArray[pathArray.Length - 1] + " - " + width + "x" + (int)(height * fontAspect);
                                 convertImage(image);
                                 Console.BackgroundColor = ConsoleColor.Black;
                                 Console.ForegroundColor = ConsoleColor.White;
@@ -316,6 +316,7 @@ namespace ImageToSymbols
                                         Console.Clear();
                                         Console.WriteLine("Enter the coefficient");
                                         coefficient = Convert.ToDouble(Console.ReadLine().Replace(',', '.'));
+                                        Console.Title = coefficient.ToString();
                                         break;
                                     case ConsoleKey.LeftArrow:
                                         image.RotateFlip(RotateFlipType.Rotate270FlipNone); break;
