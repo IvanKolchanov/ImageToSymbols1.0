@@ -10,9 +10,10 @@
   * changing the orientation of the image
   * adding a custom gradient for the output (any special symbols, lower and upper letters of english alphabet, numbers and '\u25A0' (white square)
   * changing the lower and upper borders for ' ' and '\u25A0' (white box) respectively
+  * added a possibility to use any symbol supported by console using the analyzing program I wrote - https://github.com/IvanKolchanov/AnalyzingBrigthnessOfSymbols and using its result in the pain program (9. button in the main menu)
 
 ## How does the gradient work:
-  1. I analyzed all standart special symbols - ~!@#$%^&*()_+-=[]{}|\'";:/?.>,<` , numbers and lowercase and uppercase english alphabet - 94 symbols, using a program I wrote
+  1. I analyzed all standart special symbols - ~!@#$%^&*()_+-=[]{}|\'";:/?.>,<` , numbers and lowercase and uppercase english alphabet - 94 symbols, using a program I wrote ( https://github.com/IvanKolchanov/AnalyzingBrigthnessOfSymbols )
   2. For determing the brightness of the symbol I found the average of Lightness of its pixels (to calculate lightness I transformed RGB values to linear and used recommened formulas:
   ![image](https://github.com/IvanKolchanov/ImageToSymbols1.0/assets/83294629/60fc68ec-0ae4-4096-8cb8-163cdcf820d1)
   3. The perceived lightness is determined on the scale of 0.0 to 100.0. I took it with the precision of .4 decimal places and multiplied by 10000, because it is easier to save integer values
@@ -35,6 +36,9 @@ Using the feature you can make the font very small just by rescaling the console
   6. Set up lower border for ' ' symbol <br>
   7. Read the instruction <br>
   8. Return to default settings <br>
+  9. Add completely custom gradient with any symbols after creating an analyzis file through program https://github.com/IvanKolchanov/AnalyzingBrigthnessOfSymbols <br>
+
+![image](https://github.com/IvanKolchanov/ImageToSymbols1.0/assets/83294629/7129abe2-218e-4c1e-90f6-b0664765abb5)
 
 ### Output menu:
   * After submitting a photo for the convertion while viewing it is possible to change the image in a few ways:
@@ -82,7 +86,10 @@ For some laptop users it is possible to make it even smaller (1 pixel wide) by r
   
   ### Image to color with lightness coefficient changed to 1.1 (def - 1.0) and inversion (font - 1 by 2 pixels, image - 761x378): <br>
   ![image](https://github.com/IvanKolchanov/ImageToSymbols1.0/assets/83294629/57b16fee-e132-4a44-b2d3-b87e638c5b6b)
-  
+
+  ### Image to symbol with custom german keyboard gradient - ^°1!2"3§4$5%6&7/8(9)0=ß?´`qQwWeErRtTzZuUiIoOpPüÜ+*#'aAsSdDfFgGhHjJkKlLöÖäÄyYxXcCvVbBnNmM,;.:- (font - 5 by 10 pixels, image 576x286 symbols): <br>
+  ![image](https://github.com/IvanKolchanov/ImageToSymbols1.0/assets/83294629/0898fa29-bb70-4d21-ab21-407b3efc2d94)
+
 
 
 
