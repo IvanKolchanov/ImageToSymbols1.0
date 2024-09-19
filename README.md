@@ -1,4 +1,5 @@
 # ImageToSymbols1.0
+## Creative Graphics: 2D/3D Simulation Framework for Images and Objects
 ## Main goal of the program:
   * converting an image into symbols as close as possible to the initial image
   * adapting the program for different fonts, sizes of console and photo orientation
